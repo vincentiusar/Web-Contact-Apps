@@ -5,7 +5,7 @@ const { body, validationResult, check } = require('express-validator');
 
 const contact = require('./utils/contact');
 
-const port = 5000 || process.env.PORT;
+const port = 8000 || process.env.PORT;
 
 app.set('view engine', 'ejs');
 
