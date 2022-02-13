@@ -5,7 +5,7 @@ const { body, validationResult, check } = require('express-validator');
 
 const contact = require('./utils/contact');
 
-const port = 5000;
+const port = 5000 || process.env.PORT;
 
 app.set('view engine', 'ejs');
 
@@ -119,6 +119,6 @@ app.use((req, res) => {
     res.send('<h1>Error: page not found</h1>');
 })
 
-app.listen(port || process.env.PORT, function() {
-    console.log('app listening port 5000');
+app.listen(port, function() {
+    console.log(`app listening port ${port}`);
 })
