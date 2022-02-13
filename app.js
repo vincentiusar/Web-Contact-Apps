@@ -119,6 +119,6 @@ app.use((req, res) => {
     res.send('<h1>Error: page not found</h1>');
 })
 
-app.listen(port, function() {
+app.listen(port || process.env.PORT, function() {
     console.log('app listening port 5000');
 })
