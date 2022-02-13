@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-validator": "^6.14.0",
+    "yargs": "^16.2.0"
+  },
+  "name": "contact-apps",
+  "description": "",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincentiusar/Web-Contact-Apps.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vincentiusar/Web-Contact-Apps/issues"
+  },
+  "homepage": "https://github.com/vincentiusar/Web-Contact-Apps#readme"
+}

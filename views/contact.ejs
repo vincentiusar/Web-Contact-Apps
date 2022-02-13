@@ -1,0 +1,47 @@
+<%- include('layouts/header') %> 
+<%- include('layouts/nav') %> 
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-8">
+      <h2>Contact List</h2>
+      
+      <a href="/contact/add" class="btn btn-primary mb-2">Add Contact</a>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nama</th>
+            <th scope="col">No HP</th>
+            <th scope="col">Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (contacts.length === 0) { %>
+            <!-- <tr>
+              <td colspan="4"> -->
+                <div class="alert alert-danger" role="alert">
+                  <h2>404: List Empty</h2>
+                </div>
+              <!-- </td>
+            </tr> -->
+          <% } %> 
+          <% for (let i = 0; i < contacts.length; i++) { %>
+            <tr>
+              <th scope="row"> <%= i+1 %> </th>
+              <td> <%= contacts[i].nama %> </td>
+              <td> <%= contacts[i].noHP %> </td>
+              <td>
+                <a href="/contact/<%= contacts[i].noHP %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i> detail </a>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<%- include('layouts/footer') %>
