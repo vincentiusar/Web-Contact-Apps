@@ -12,8 +12,12 @@
                     <h6 class="card-subtitle mb-2 text-muted"> <%= contacts.noHP %></h6>
                     <p class="card-text"><%= contacts.email %></p>
                     <a href="/contact/edit/<%= contacts.noHP %>" class="btn btn-info badge"> edit </a>
-                    <a href="/contact/delete/<%= contacts.noHP %>" class="btn btn-danger badge" onclick="return confirm('are you sure?');"> delete </a>
+                    <!-- <a href="/contact/delete/<%= contacts.noHP %>" class="btn btn-danger badge" onclick="return confirm('are you sure?');"> delete </a> -->
                     <!-- on click untuk konfirmasi -->
+                    <form action="/contact?_method=DELETE" method="POST" class="d-inline">
+                        <input type="hidden" name="noHP" value="<%=contacts.noHP%>" >
+                        <button type="submit" class="btn btn-danger badge" onclick="return confirm('are you sure?');">hapus</button>
+                    </form>
                     <a href="/contact" class="card-link d-block mt-3">&laquo; back to list contact</a>
                     
                     </div>
@@ -26,3 +30,5 @@
                 <% } %>
     </div>
 </div>
+
+<%- include('layouts/footer') %>

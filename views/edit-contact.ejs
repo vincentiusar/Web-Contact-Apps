@@ -18,7 +18,7 @@
             <% } %>
             <!-- post method karna submit sesuatu
             action sama asal pas di controller pake post -->
-            <form method="post" action="/contact/update">
+            <form method="post" action="/contact?_method=PUT">
               <!-- tampung no hp lama -->
               <input type="hidden" name="tmpKey" value="<%=contacts.noHP%>" >
               <div class="mb-3">
@@ -36,3 +36,5 @@
         </div>
     </div>
 </div>
+
+<%- include('layouts/footer') %>

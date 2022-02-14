@@ -1,24 +1,29 @@
 const express = require('express');
 const app = express();
 
+require('./utils/db');
+const Contact = require('./model/contact');
+
 const { body, validationResult, check } = require('express-validator');
+const e = require('express');
 
-const contact = require('./utils/contact');
+const methodOverride = require('method-override');
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
+app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
-
 app.use(express.static('asset'));
-
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', function(req, res) {
     res.render('index', { title: "index.html" });
 })
 
-app.get('/contact', function(req, res) {
-    const contacts = contact.loadFile();
+// async karena menunggu sampai promise find selesai
+app.get('/contact', async function(req, res) {
+    const contacts = await Contact.Contact.find();
+
     res.render('contact', { title: "contact.html", contacts: contacts });
 })
 
@@ -38,9 +43,9 @@ app.post('/contact', [
         else return check('email', 'Email is not valid').isEmail()
     }),
     check('noHP', 'No HP is not valid').isMobilePhone('id-ID'), 
-    body('noHP').custom( function(value) {
-        const dupli = contact.findContact(value);
-        if (dupli !== undefined) 
+    body('noHP').custom( async function(value) {
+        const dupli = await Contact.Contact.findOne({ noHP: value} );
+        if (dupli) 
             throw new Error("No HP is already in the list");
         return true;
     } )
@@ -53,26 +58,37 @@ app.post('/contact', [
                 errors : errors.array(),
             })
         } else {
-            contact.addContact(req.body);
+            Contact.Contact.insertMany(req.body);
             res.redirect('/contact');
         }
     }
 )
 
 // delete contact use params
-app.get('/contact/delete/:noHP', function(req, res) {
-    const contacts = contact.findContact(req.params.noHP);
+// app.get('/contact/delete/:noHP', async function(req, res) {
+//     const contacts = await Contact.Contact.findOne( {noHP: req.params.noHP });
 
-    if (contacts === undefined) {
-        res.status(404);
-        res.send("<h1>No Such No HP</h1>");
-    }
-    contact.deleteContact(req.params.noHP);
-    res.redirect('/contact');
+//     if (!contacts) {
+//         res.status(404);
+//         res.send("<h1>No Such No HP</h1>");
+//     } else {
+//         Contact.Contact.deleteOne({ noHP: contacts.noHP })
+//         .then((result) => { 
+//             res.redirect('/contact'); 
+//         });
+        
+//     }
+// })
+
+app.delete('/contact', function(req, res) {
+    Contact.Contact.deleteOne({ noHP: req.body.noHP } )
+    .then((result) => {
+        res.redirect('/contact'); 
+    })
 })
 
-app.get('/contact/edit/:noHP', function(req, res) {
-    const contacts = contact.findContact(req.params.noHP);
+app.get('/contact/edit/:noHP', async function(req, res) {
+    const contacts = await Contact.Contact.findOne({ noHP: req.params.noHP} );
     if (contacts === undefined) {
         res.send("<h1>Not so Fast Ferguso</h1>")
     } else {
@@ -85,13 +101,19 @@ app.get('/contact/edit/:noHP', function(req, res) {
 })
 
 // edit data
-app.post('/contact/update', [
+app.put('/contact', [
     // check (param, error msg)
     body('email').custom( function(value) {
         if (value === undefined) return true;
         else return check('email', 'Email is not valid').isEmail()
     }),
     check('noHP', 'No HP is not valid').isMobilePhone('id-ID'), 
+    body('noHP').custom( async function(value, { req }) {
+        const dupli = await Contact.Contact.findOne({ noHP: value} );
+        if (dupli && req.body.tmpKey !== value) 
+            throw new Error("No HP is already in the list");
+        return true;
+    } )
     ],
     function(req, res) {
         const errors = validationResult(req);
@@ -103,14 +125,23 @@ app.post('/contact/update', [
                 errors : errors.array(),
             })
         } else {
-            contact.editContact(req.body.tmpKey, req.body);
-            res.redirect('/contact');
+            Contact.Contact.updateOne( 
+                { noHP: req.body.tmpKey },
+                {
+                    $set: {
+                        nama: req.body.nama,
+                        email: req.body.email,
+                        noHP: req.body.noHP,
+                    }
+                }
+            )
+            .then((result) => res.redirect('/contact'));
         }
     }
 )
 
-app.get('/contact/:noHP', function(req, res) {
-    const contacts = contact.findContact(req.params.noHP);
+app.get('/contact/:noHP', async function(req, res) {
+    const contacts = await Contact.Contact.findOne({ noHP: req.params.noHP });
     res.render('detail', { title: "detail.html", contacts: contacts });
 })
 
